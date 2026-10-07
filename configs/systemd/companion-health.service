@@ -1,0 +1,20 @@
+[Unit]
+Description=UACOM Companion Health Monitor (thermal/power/disk)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/companion-health.sh
+Restart=always
+RestartSec=5
+Environment=POLL_SECONDS=5
+Environment=TEMP_WARN=75
+Environment=TEMP_CRIT=80
+Environment=TEMP_SHUTDOWN=85
+Environment=V_WARN=4.75
+Environment=V_SHUTDOWN=4.65
+Environment=DISK_WARN=85
+
+[Install]
+WantedBy=multi-user.target

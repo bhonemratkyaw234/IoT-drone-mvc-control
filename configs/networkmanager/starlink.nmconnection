@@ -1,0 +1,18 @@
+# Starlink WAN profile (NetworkManager)
+# Install: sudo nmcli connection import type ethernet file starlink.nmconnection
+#          sudo nmcli connection up uacom-starlink
+[connection]
+id=uacom-starlink
+type=ethernet
+interface-name=eth1
+autoconnect=true
+ipv4.never-default=true
+ipv6.never-default=true
+
+[ipv4]
+method=auto
+route-metric=300
+
+[ipv6]
+method=auto
+route-metric=300

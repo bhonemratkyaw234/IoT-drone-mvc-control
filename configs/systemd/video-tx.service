@@ -1,0 +1,16 @@
+[Unit]
+Description=UACOM Video Uplink (camera -> GCS over wg0)
+After=network-online.target wg-quick@wg0.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/video-tx.sh
+Restart=always
+RestartSec=3
+Environment=GCS_HOST=10.8.0.20
+Environment=GCS_PORT=5600
+Environment=STATE_FILE=/run/wan-failover/active-link
+
+[Install]
+WantedBy=multi-user.target

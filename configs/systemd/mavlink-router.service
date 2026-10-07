@@ -1,0 +1,22 @@
+[Unit]
+Description=MAVLink Router (UACOM C2)
+Documentation=file:/usr/share/doc/mavlink-router
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/test -e /dev/fc
+ExecStart=/usr/bin/mavlink-routerd -c /etc/mavlink-router/main.conf
+Restart=always
+RestartSec=2
+# Least privilege
+User=root
+# Limit exposure
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/uacom /run
+
+[Install]
+WantedBy=multi-user.target

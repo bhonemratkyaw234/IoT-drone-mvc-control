@@ -1,0 +1,55 @@
+#!/usr/bin/nft -f
+# /etc/nftables/uacom.nft
+# Default-deny inbound on physical links. C2/video confined to the wg0 overlay.
+# Apply: sudo nft -f /etc/nftables/uacom.nft && sudo systemctl enable --now nftables
+
+flush ruleset
+
+define GCS = 10.8.0.20
+define AIRCRAFT = 10.8.0.10
+define HUB = 10.8.0.1
+
+table inet uacom {
+    set wan_ifaces {
+        type ifname
+        elements = { "wlan0", "wwan0", "eth1" }
+    }
+
+    chain input {
+        type filter hook input priority filter; policy drop;
+
+        # Established/related
+        ct state established,related accept
+        iif "lo" accept
+
+        # ICMP (rate-limited)
+        ip protocol icmp icmp type { echo-request, echo-reply, destination-unreachable } \
+            limit rate 10/second accept
+        ip6 nexthdr icmpv6 accept
+
+        # DHCP client
+        iifname $wan_ifaces udp sport 67 udp dport 68 accept
+
+        # WireGuard: only needed on a public endpoint (hub/ground). Harmless here.
+        udp dport 51820 accept
+
+        # On the overlay only: MAVLink, video, SSH
+        iifname "wg0" udp dport 14550 accept
+        iifname "wg0" tcp dport 5760 accept
+        iifname "wg0" tcp dport 5780 accept
+        iifname "wg0" udp dport 5600 accept
+        iifname "wg0" ip saddr $GCS tcp dport 22 accept
+
+        # Drop everything else silently
+        counter drop
+    }
+
+    chain forward {
+        type filter hook forward priority filter; policy drop;
+        ct state established,related accept
+    }
+
+    chain output {
+        type filter hook output priority filter; policy accept;
+    }
+}

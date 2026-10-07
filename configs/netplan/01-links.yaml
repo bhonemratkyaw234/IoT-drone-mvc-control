@@ -1,0 +1,38 @@
+# /etc/netplan/01-links.yaml
+# UACOM link layer. Metrics are owned by wan-failover, not set here.
+# Apply with: sudo netplan apply  (or netplan try)
+network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+    eth0:
+      dhcp4: true
+      optional: true
+      dhcp4-overrides:
+        use-routes: false
+        route-metric: 700
+
+    # Starlink terminal (Ethernet)
+    eth1:
+      dhcp4: true
+      optional: true
+      dhcp4-overrides:
+        use-routes: false
+        route-metric: 300
+      dhcp-identifier: mac
+
+  wifis:
+    wlan0:
+      dhcp4: true
+      optional: true
+      access-points:
+        "UACOM-C2-5G":
+          auth:
+            key-management: psk
+            password: "REPLACE_WITH_STRONG_PSK"
+      dhcp4-overrides:
+        use-routes: false
+        route-metric: 100
+
+  # LTE is managed by NetworkManager + ModemManager; see
+  # configs/networkmanager/lte.nmconnection

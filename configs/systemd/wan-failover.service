@@ -1,0 +1,19 @@
+[Unit]
+Description=UACOM Multi-WAN Health & Failover Supervisor
+After=network-online.target wg-quick@wg0.service
+Wants=network-online.target
+Before=video-tx.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/wan-failover.sh
+Restart=always
+RestartSec=5
+Environment=STATE_DIR=/run/wan-failover
+Environment=ROUND_SECONDS=3
+Environment=FAILS_TO_DEMOTE=3
+Environment=HYSTERESIS=0.2
+ReadWritePaths=/run/wan-failover
+
+[Install]
+WantedBy=multi-user.target

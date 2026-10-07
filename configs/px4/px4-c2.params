@@ -1,0 +1,49 @@
+# PX4 airframe baseline — replace with your frame's file; key safety params below.
+# Load with QGroundControl or: mavparam / MAVProxy.
+# This file documents the C2-relevant parameters for a transmitter-less aircraft.
+
+# --- Frame / motors (EXAMPLE: quad X) ---
+# MAV_TYPE, SYS_AUTOSTART, etc. come from the frame config; set explicitly:
+SYS_AUTOSTART = 4001        # generic quad X (adjust to airframe)
+MAV_TYPE = 2                # quadrotor
+
+# --- Companion / MAVLink link (TELEM2) ---
+MAV_1_CONFIG = TELEM2
+MAV_1_MODE = Onboard
+SER_TEL2_BAUD = 921600
+
+# --- Data-link loss (no telemetry/command from companion) ---
+NAV_DLL_ACT = 2             # Return mode
+COM_DL_LOSS_T = 10          # seconds
+
+# --- Offboard setpoint loss ---
+COM_OBL_ACT = 2             # Return mode on offboard loss
+COM_OBL_RC_ACT = 2
+COM_OF_LOSS_T = 1.0
+
+# --- Return / failsafe behavior ---
+RTL_RETURN_ALT = 60         # metres
+RTL_DESCEND_ALT = 10
+RTL_LAND_DELAY = 0
+
+# --- Geofence ---
+GF_ACTION = 1               # Return on breach
+GF_MAX_HOR_DIST = 500       # metres
+GF_MAX_VER_DIST = 120       # metres
+GF_SOURCE = 0
+
+# --- Arming & safety ---
+COM_RC_IN_MODE = 1          # no RC joystick requirement (companion only)
+COM_ARM_WO_GPS = 0          # require GPS fix
+COM_ARM_MAG_STR = 1
+COM_ARM_EKF_AB = 0.0011
+COM_ARM_EKF_GB = 0.0008
+
+# --- Battery failsafe ---
+BAT_LOW_THR = 0.25          # RTL at 25%
+BAT_CRIT_THR = 0.10         # Land at 10%
+BAT_EMERGEN_THR = 0.05
+
+# --- Position / EKF ---
+EKF2_AID_MASK = 1           # GPS
+EKF2_HGT_MODE = 0           # barometric (use 3 for range sensor)

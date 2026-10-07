@@ -1,0 +1,28 @@
+# Stable device names for the flight controller, LTE modem, and cameras.
+# Install: sudo cp 99-flight-controller.rules /etc/udev/rules.d/
+#          sudo udevadm control --reload && sudo udevadm trigger
+#
+# Find your IDs with: lsusb   and   udevadm info -a -n /dev/ttyACM0
+
+ACTION!="add|change", GOTO="uacom_end"
+SUBSYSTEM!="tty|video4linux", GOTO="uacom_end"
+
+# --- Flight controllers (match USB VID:PID; extend as needed) ---
+# Pixhawk 6X / common ArduPilot boards
+SUBSYSTEM=="tty", ATTRS{idVendor}=="26ac", ATTRS{idProduct}=="0011", SYMLINK+="fc", MODE="0660", GROUP="dialout"
+# PX4 / Holybro
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2dae", ATTRS{idProduct}=="1012", SYMLINK+="fc", MODE="0660", GROUP="dialout"
+# CubePilot (serial via USB)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2dae", ATTRS{idProduct}=="1016", SYMLINK+="fc", MODE="0660", GROUP="dialout"
+# Fallback: first CDC-ACM that identifies as a flight controller
+SUBSYSTEM=="tty", ATTRS{interface}=="*Flight*", SYMLINK+="fc", MODE="0660", GROUP="dialout"
+
+# --- LTE modems (Quectel / Sierra / generic) ---
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2c7c", SYMLINK+="lte-%k", MODE="0660", GROUP="dialout"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1199", SYMLINK+="lte-%k", MODE="0660", GROUP="dialout"
+SUBSYSTEM=="net",  ATTRS{idVendor}=="2c7c", NAME="wwan0"
+
+# --- Cameras ---
+SUBSYSTEM=="video4linux", ATTRS{idVendor}=="0c45", SYMLINK+="cam_front", GROUP="video"
+
+LABEL="uacom_end"

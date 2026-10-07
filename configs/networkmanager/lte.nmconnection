@@ -1,0 +1,27 @@
+# LTE WAN profile (NetworkManager)
+# Install: sudo nmcli connection import type gsm file lte.nmconnection
+#          sudo nmcli connection up uacom-lte
+[connection]
+id=uacom-lte
+type=gsm
+interface-name=wwan0
+autoconnect=true
+# Keep this connection from becoming a competing default route automatically.
+ipv4.never-default=true
+ipv6.never-default=true
+
+[gsm]
+apn=REPLACE_WITH_CARRIER_APN
+# Optional carrier credentials:
+# username=
+# password=
+# Pin the modem by IMEI if multiple are present:
+# modem-mounted=false
+
+[ipv4]
+method=auto
+route-metric=200
+
+[ipv6]
+method=auto
+route-metric=200
